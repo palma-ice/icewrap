@@ -13,6 +13,16 @@ module icewrap_def
 
     type icewrap_class
 
+        ! General information to be stored 
+        character(len=56) :: domain                     ! Name of current domain 
+        integer           :: nx                         ! Number of grid points, x-direction
+        integer           :: ny                         ! Number of grid points, y-direction
+        
+        real(wp)          :: time                       ! [yr] Current model time 
+
+        real(wp), allocatable :: xc(:)                  ! [m] x-axis cartesian coordinates
+        real(wp), allocatable :: yc(:)                  ! [m] y-axis cartesian coordinates
+        
         ! === Fields that serve as outputs from the ice-sheet model ===
 
         real(wp), allocatable :: z_srf(:,:)             ! [m] Surface elevation
@@ -47,19 +57,17 @@ module icewrap_def
         real(wp), allocatable :: basins(:,:) 
         real(wp), allocatable :: regions(:,:) 
 
-        logical,  allocatable :: ice_allowed(:,:)     ! Locations where ice thickness can be greater than zero 
+        logical,  allocatable :: ice_allowed(:,:)       ! Locations where ice thickness can be greater than zero 
 
-        real(wp), allocatable :: H_ice_ref(:,:)       ! Reference ice thickness, may be used for relaxation routines
-        real(wp), allocatable :: z_bed_ref(:,:)       ! Reference bedrock elevation, may be used for relaxation routines
+        real(wp), allocatable :: H_ice_ref(:,:)         ! [m] Reference ice thickness, may be used for relaxation routines
+        real(wp), allocatable :: z_bed_ref(:,:)         ! [m] Reference bedrock elevation, may be used for relaxation routines
 
     end type 
 
 
 contains
 
-
-
-    subroutine ice_alloc(ice,nx,ny)
+    subroutine icewrap_alloc(ice,nx,ny)
         ! Allocate ice fields 
 
         implicit none 
@@ -69,7 +77,7 @@ contains
         integer, intent(IN) :: ny 
         
         ! First ensure all fields are deallocated
-        call ice_dealloc(ice) 
+        call icewrap_dealloc(ice) 
 
         ! Allocate fields 
         ! allocate(ice%z_sur(nx,ny))
@@ -120,9 +128,9 @@ contains
 
         return 
 
-    end subroutine ice_alloc
+    end subroutine icewrap_alloc
     
-    subroutine ice_dealloc(ice)
+    subroutine icewrap_dealloc(ice)
         ! Deallocate ice fields 
 
         implicit none 
@@ -154,6 +162,6 @@ contains
         
         return 
 
-    end subroutine ice_dealloc
+    end subroutine icewrap_dealloc
 
 end module icewrap_def
