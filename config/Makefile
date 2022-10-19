@@ -3,6 +3,7 @@
 
 # PATH options
 srcdir = src
+libdir = libs
 objdir = lib/include
 bindir = lib/bin
 
@@ -41,11 +42,16 @@ $(objdir)/icewrap_stub.o: $(srcdir)/icewrap_stub.f90 $(objdir)/icewrap_def.o
 $(objdir)/icewrap_def.o: $(srcdir)/icewrap_def.f90
 	$(FC) $(DFLAGS) $(FFLAGS) -c -o $@ $<
 
-$(objdir)/ncio.o: $(srcdir)/ncio.f90
+$(objdir)/ncio.o: $(libdir)/ncio.f90
 	$(FC) $(DFLAGS) $(FFLAGS) $(INC_NC) -c -o $@ $<
 
-$(objdir)/nml.o: $(srcdir)/nml.f90
+$(objdir)/nml.o: $(libdir)/nml.f90
 	$(FC) $(DFLAGS) $(FFLAGS) -c -o $@ $<
+
+icewrap_libs = 	$(objdir)/icewrap_def.o
+# icewrap_libs = 	$(objdir)/icewrap_def.o \
+# 				$(objdir)/ncio.o \
+# 				$(objdir)/nml.o
 
 ###############################################
 ##
@@ -53,14 +59,14 @@ $(objdir)/nml.o: $(srcdir)/nml.f90
 ##
 ###############################################
 
-test_stub : $(objdir)/icewrap_def.o $(objdir)/icewrap_stub.o
+test_stub : $(icewrap_libs) $(objdir)/icewrap_stub.o
 		$(FC) $(DFLAGS) $(FFLAGS) $(INC_LIS) -o $(bindir)/test_stub.x tests/test_stub.f90 \
 			$(LFLAGS) $^
 		@echo " "
 		@echo "    test_stub.x is ready."
 		@echo " "
 
-test_yelmo : $(objdir)/icewrap_def.o $(objdir)/icewrap_yelmo.o
+test_yelmo : $(icewrap_libs) $(objdir)/icewrap_yelmo.o
 		$(FC) $(DFLAGS) $(FFLAGS) $(INC_LIS) -o $(bindir)/test_yelmo.x tests/test_yelmo.f90 \
 			$(LFLAGS) $^
 		@echo " "
